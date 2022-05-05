@@ -1,73 +1,54 @@
 # coding:utf-8
+# 全站排名 86,668
 
+
+from requests import head
+
+
+class ListNode:
+    def __init__(self, x):
+        self.val = x
+        self.next = None
 
 class Solution:
-    def calculate(self, s: str) -> int:
-        s = s.replace(' ', '')
-        digits, operate = [], []
-        lenS = len(s)
-        i = 0
-        while i < lenS:
-            print("i:{}, s[i]:{}, digits:{}, ope:{}".format(i, s[i], digits, operate))
-            if s[i] in '0123456789':
-                j = i
-                while j < lenS and s[j] in '0123456789':
-                    j += 1
-                digits.append(int(s[i:j]))
-                i = j
-            else:
-                if len(operate) == 0:
-                    operate.append(s[i])
-                    i += 1
-                elif s[i] in '+-' and operate[-1] in '+-':
-                    while len(operate)>0 and s[i] in '+-' and operate[-1] in '+-':
-                        right, left = digits.pop(), digits.pop()
-                        oper = operate.pop()
-                        if oper == '+':     
-                            digits.append(left+right)
-                        else:
-                            digits.append(left-right)
-                    operate.append(s[i])
-                    i += 1
-                elif s[i] in '+-' and operate[-1] in '*/':
-                    while len(operate) > 0 and s[i] in '+-' and operate[-1] in '*/':
-                        right, left = digits.pop(), digits.pop()
-                        oper = operate.pop()
-                        if oper == '*':     
-                            digits.append(left*right)
-                        else:
-                            digits.append(left//right)
-                    operate.append(s[i])
-                    i += 1
-                elif s[i] in '*/' and operate[-1] in '+-':
-                    operate.append(s[i])
-                    i += 1
-                else:
-                    while len(operate) > 0 and s[i] in '*/' and operate[-1] in '*/':
-                        right, left = digits.pop(), digits.pop()
-                        oper = operate.pop()
-                        if oper == '*':     
-                            digits.append(left*right)
-                        else:
-                            digits.append(left//right)
-                    operate.append(s[i])
-                    i += 1
-            print("digits:{}, ope:{}".format(digits, operate))
-        while len(operate) > 0:
-            right, left = digits.pop(), digits.pop()
-            oper = operate.pop()
-            if oper == '*':     
-                digits.append(left*right)
-            elif oper == '/':
-                digits.append(left//right)
-            elif oper == '+':
-                digits.append(left+right)
-            else:
-                digits.append(left-right)
-        return digits[0]
-
+    def detectCycle(self, head):
+        if not head:
+            return None
+        slow, fast = head, head.next
+        while fast.next and fast.next.next and fast != slow:
+            slow = slow.next
+            fast = fast.next.next 
+        if fast.next and fast.next.next:
+            lenA = 1
+            node = slow.next
+            while node != slow:
+                lenA += 1
+                node = node.next
+            lenB = 0
+            count = 0
+            node = head
+            while count < 2:
+                lenB += 1
+                node = node.next
+                if node == slow:
+                    count += 1
+            res = head
+            for _ in range(lenB-2*lenA-1):
+                res = res.next
+            return res
+        else:
+            return None
 
 solo = Solution()
-solo.calculate("3+2*2")
+node1 = ListNode(3)
+node2 = ListNode(2)
+node3 = ListNode(0)
+node4 = ListNode(-4)
+
+node1.next = node2 
+node2.next = node3 
+node3.next = node4 
+node4.next = node2
+print(solo.detectCycle(node1).val)
 
 
