@@ -2,53 +2,40 @@
 # 全站排名 86,668
 
 
-from requests import head
-
-
-class ListNode:
-    def __init__(self, x):
-        self.val = x
-        self.next = None
-
 class Solution:
-    def detectCycle(self, head):
-        if not head:
-            return None
-        slow, fast = head, head.next
-        while fast.next and fast.next.next and fast != slow:
-            slow = slow.next
-            fast = fast.next.next 
-        if fast.next and fast.next.next:
-            lenA = 1
-            node = slow.next
-            while node != slow:
-                lenA += 1
-                node = node.next
-            lenB = 0
-            count = 0
-            node = head
-            while count < 2:
-                lenB += 1
-                node = node.next
-                if node == slow:
-                    count += 1
-            res = head
-            for _ in range(lenB-2*lenA-1):
-                res = res.next
-            return res
-        else:
-            return None
+    def solveNQueens(self, n: int):
+        def backTrace(r, path, diag1, diag2):
+            if r == n:
+                tRes = []
+                for c in path:
+                    temp = ""
+                    for v in range(n):
+                        if v == c:
+                            temp+='Q'
+                        else:
+                            temp+='.'
+                    tRes.append(temp)
+                res.append(tRes)    
+            else:
+                for c in range(n):
+                    # 不同行列/不同对角线
+                    if c in path or r+c in diag1 or r-c in diag2:
+                        continue
+                    path.append(c)
+                    diag1.add(r+c)
+                    diag2.add(r-c)
+                    backTrace(r+1, path, diag1, diag2)
+                    diag1.remove(r+c)
+                    diag2.remove(r-c)
+                    path.pop()
+        res = []
+        if n is None or n <= 0:
+            return [[]]
+        backTrace(0, [], set(), set())
+        return res
 
 solo = Solution()
-node1 = ListNode(3)
-node2 = ListNode(2)
-node3 = ListNode(0)
-node4 = ListNode(-4)
 
-node1.next = node2 
-node2.next = node3 
-node3.next = node4 
-node4.next = node2
-print(solo.detectCycle(node1).val)
+print(solo.solveNQueens(4))
 
 
