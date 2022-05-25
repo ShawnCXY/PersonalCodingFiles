@@ -3,39 +3,26 @@
 
 
 class Solution:
-    def solveNQueens(self, n: int):
-        def backTrace(r, path, diag1, diag2):
-            if r == n:
-                tRes = []
-                for c in path:
-                    temp = ""
-                    for v in range(n):
-                        if v == c:
-                            temp+='Q'
-                        else:
-                            temp+='.'
-                    tRes.append(temp)
-                res.append(tRes)    
+    def countEval(self, s: str, result: int) -> int:
+        def backTrace(s, res):
+            if len(s) == 1:
+                if int(s[0]) == result:
+                    res[0] += 1
             else:
-                for c in range(n):
-                    # 不同行列/不同对角线
-                    if c in path or r+c in diag1 or r-c in diag2:
-                        continue
-                    path.append(c)
-                    diag1.add(r+c)
-                    diag2.add(r-c)
-                    backTrace(r+1, path, diag1, diag2)
-                    diag1.remove(r+c)
-                    diag2.remove(r-c)
-                    path.pop()
-        res = []
-        if n is None or n <= 0:
-            return [[]]
-        backTrace(0, [], set(), set())
-        return res
+                for i in range(0,len(s)-2,2):
+                    v = '0'
+                    if s[i+1] == '|' and (s[i] == '1' or s[i+2] == '1'):
+                        v = '1'
+                    if s[i+1] == '&' and s[i] == '1' and s[i+2] == '1':
+                        v = '1'
+                    if s[i+1] == '^' and s[i] != s[i+2]:
+                        v = '1'
+                    backTrace(s[:i]+[v]+s[i+3:], res)
+        res = [0]
+        backTrace(list(s), res)
+        return res[0]
 
 solo = Solution()
-
-print(solo.solveNQueens(4))
+print(solo.countEval("0&0&0&1^1|0",1))
 
 
